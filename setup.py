@@ -5,7 +5,7 @@ from setuptools import setup, find_packages
 
 # dynamically pull the version from django_ace/__init__.py
 version = re.search('^__version__ = "(.+?)"$',
-                    open(join('django_prod_calendar', 
+                    open(join('prod_calendar', 
                                 '__init__.py')).read(), 
                                                 re.MULTILINE).group(1)
 
@@ -20,7 +20,7 @@ setup(
     license="Simplified BSD",
     url='https://github.com/grasuth/django-prod-calendar',
 
-    packages=find_packages(exclude=["example", "example.*"]),
+    packages=find_packages(),
     include_package_data=True,
     install_requires=['Django'],
 
