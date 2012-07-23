@@ -1,3 +1,4 @@
+from decimal import Decimal
 from datetime import datetime, date, timedelta
 
 from django.conf import settings
@@ -59,7 +60,7 @@ class Defaults(models.Model):
         Get the default number of spaces per slot
 
         """
-        default = cls.objects.get(id=1)
+        defaults = cls.objects.get(id=1)
         return defaults.spaces
 
 
@@ -97,11 +98,12 @@ class Slot(models.Model):
             enough space was available in this slot.
 
         """
-        if self.used_spaces + count > spaces:
+        if self.used_spaces + count > self.spaces:
             return None
         else:
-            value = self._get_space_value(count)
+            value = self.get_space_value(count)
             self.used_spaces += count
+            self.save()
             return value
 
     def get_space_value(self, count=1):
@@ -110,7 +112,7 @@ class Slot(models.Model):
 
         """
         value = Decimal('0')
-        for s in range(self.used_spaces, self.used_spaces + count):
+        for s in range(self.used_spaces + 1, self.used_spaces + count + 1):
             value += SpaceValue.get_space_value(s)
         return value
 
@@ -123,11 +125,12 @@ class Slot(models.Model):
         """
         try:
             slot = cls.objects.get(start_date=date)
-        except ObjectDoesNotExist:
-            last_slot = cls.objects.all().order_by('-start_date')[0]
-            slot_delta = cls.get_slot_time_delta()
-            if last_slot:
-                start_date = last_slot + slot_delta
+        except cls.DoesNotExist:
+            reverse_slots = cls.objects.all().order_by('-start_date')
+            slot_delta = cls._get_slot_time_delta()
+            if reverse_slots.count():
+                last_slot = reverse_slots[0]
+                start_date = last_slot.start_date + slot_delta
             else:
                 start_date = cls._get_start_date()
             default_spaces = Defaults.get_default_spaces()
@@ -138,7 +141,7 @@ class Slot(models.Model):
                         used_spaces=0,
                         )
                 new_slot.save()
-                start_date = start_date + cls.get_slot_time_delta()
+                start_date = start_date + slot_delta
             slot = new_slot
         return slot
 
@@ -158,8 +161,12 @@ class Slot(models.Model):
 
         """
         incoming_time = getattr(settings, 'SLOT_START_DATE')
-        dt = datetime.strptime(incoming_time, settings.DATE_FORMAT)
-        return dt.date
+        for pat in settings.DATE_INPUT_FORMATS:
+            try:
+                dt = datetime.strptime(incoming_time, pat)
+                return dt.date()
+            except ValueError:
+                pass
 
 
 class SpaceValue(models.Model):
