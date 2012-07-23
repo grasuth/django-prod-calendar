@@ -51,7 +51,7 @@ class Defaults(models.Model):
         pass
 
     def __unicode__(self):
-        return ('Default spaces={0}').format(self.spaces)
+        return _('Default spaces={0}').format(self.spaces)
 
     @classmethod
     def get_default_spaces(cls):
@@ -182,6 +182,11 @@ class SpaceValue(models.Model):
     note = models.TextField(
             help_text=_('Notes about this space value.'),
             )
+
+    def __unicode__(self):
+        return _('Spaces: {0} Value: {1} ({2})').format(self.spaces,
+                                                    self.value,
+                                                    self.note)
 
 
     @classmethod

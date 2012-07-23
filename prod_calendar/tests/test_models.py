@@ -64,3 +64,53 @@ class SpaceValueTest(TestCase):
         sv.save()
         value = SpaceValue.get_space_value(3)
         self.assertEqual(Decimal('6.99'), value)
+
+    def test_space_value_unicode(self):
+        """
+        Test unicode return value for ``SpaceValue``
+
+        """
+        sv = SpaceValue(spaces=1,
+                        value=Decimal('6.99'),
+                        note='Note')
+        sv.save()
+        self.assertEqual(u'Spaces: 1 Value: 6.99 (Note)', unicode(sv))
+
+
+class DefaultsTest(TestCase):
+    """
+    Test Defaults defines default spaces
+
+    
+    """
+    def test_defaults_singleton_create(self):
+        """
+        Test defaults can be created and is a singleton row.
+
+        """
+        defaults = Defaults(spaces=5)
+        defaults.save()
+        defaults2 = Defaults(spaces=6)
+        defaults2.save()
+        d_rows = Defaults.objects.all()
+        self.assertEqual(1, len(d_rows))
+    
+    def test_defaults_cant_delete(self):
+        """
+        Test defaults can not be deleted.
+
+        """
+        defaults = Defaults(spaces=5)
+        defaults.save()
+        defaults.delete()
+        d_rows = Defaults.objects.all()
+        self.assertEqual(1, len(d_rows))
+
+    def test_unicode(self):
+        """
+        Test defaults``unicode`` is as expected.
+
+        """
+        defaults = Defaults(spaces=5)
+        defaults.save()
+        self.assertEqual(u'Default spaces=5', unicode(defaults))
