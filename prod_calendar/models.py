@@ -114,7 +114,6 @@ class Slot(models.Model):
             value += SpaceValue.get_space_value(s)
         return value
 
-
     @classmethod
     def get_slot_for_date(cls, date):
         """
@@ -188,23 +187,22 @@ class SpaceValue(models.Model):
                                                     self.value,
                                                     self.note)
 
-
     @classmethod
     def get_space_value(cls, space_index):
         """
         Get the value of the given space.
-        
-        Returns None if there are no SpaceValues, or the 
+
+        Returns None if there are no SpaceValues, or the
         most expensive value if above the number of allocated
         spaces.
-        
+
         :param space_index:
-            The index of the space to get a value for. Slot 
+            The index of the space to get a value for. Slot
             indexes start at 1, not 0.
 
         :returns:
             ``None`` if no space values available, or the relevant
-            value for the given space index (as a Decimal) or the 
+            value for the given space index (as a Decimal) or the
             maximum value for that space if index is beyond the last
             space value.
 
@@ -217,4 +215,3 @@ class SpaceValue(models.Model):
                 return val.value
         biggest = cls.objects.all().order_by('-value')[0]
         return biggest.value
-
