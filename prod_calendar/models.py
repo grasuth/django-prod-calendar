@@ -188,11 +188,28 @@ class SpaceValue(models.Model):
     def get_space_value(cls, space_index):
         """
         Get the value of the given space.
+        
+        Returns None if there are no SpaceValues, or the 
+        most expensive value if above the number of allocated
+        spaces.
+        
+        :param space_index:
+            The index of the space to get a value for. Slot 
+            indexes start at 1, not 0.
+
+        :returns:
+            ``None`` if no space values available, or the relevant
+            value for the given space index (as a Decimal) or the 
+            maximum value for that space if index is beyond the last
+            space value.
 
         """
         values = cls.objects.all().order_by('value')
+        if len(values) == 0:
+            return None
         for val in values:
             if space_index <= val.spaces:
                 return val.value
-        return values[-1].value
+        biggest = cls.objects.all().order_by('-value')[0]
+        return biggest.value
 
