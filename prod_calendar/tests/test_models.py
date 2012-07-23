@@ -13,7 +13,7 @@ class SpaceValueTest(TestCase):
 
     def test_space_value_basic(self):
         """
-        Tests SpaceValue create
+        Tests SpaceValue create.
 
         """
         sv = SpaceValue(spaces=1,

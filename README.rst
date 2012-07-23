@@ -21,11 +21,18 @@ manually adjust it at will.  That's the aim of this app.
 How does it work
 ----------------
 
-Don't know, haven't built it yet.
+There are standard sized slots, a multiple of a day, and each slot has
+a capacity (a number of spaces).
 
-Installation
-------------
+Spaces, when allocated, have a value assigned from a table of SpaceValues that
+increase as more spaces are used.
 
-Soon, really soon :-)
+Status
+------
 
+In development. Feel free to have a look, but don't expect it to work.  As at
+23 Jul 2012, the models are complete, and I'm a adding tests around the
+functionality that seems to be needed.
+
+There will be lots of changes before this hits alpha.
 
